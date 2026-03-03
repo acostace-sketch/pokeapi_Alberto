@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokédex Web</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    
+    <header class="topbar">
+        <h1>Mini Pokédex</h1>
+    </header>
+
+   
+    <main>
+        <div class="pokemon-container">
+            <h2 id="pokemon-name">Nombre</h2>
+            <img id="pokemon-sprite" src="" alt="Sprite del Pokémon">
+            
+            <div class="info">
+                <h3>Tipos</h3>
+                <ul id="pokemon-types"></ul>
+
+                <h3>Habilidades</h3>
+                <ul id="pokemon-abilities"></ul>
+            </div>
+        </div>
+
+       
+        <div class="buttons">
+            <button onclick="loadPokemon('charmander')">Charmander</button>
+            <button onclick="loadPokemon('bulbasaur')">Bulbasaur</button>
+            <button onclick="loadPokemon('squirtle')">Squirtle</button>
+        </div>
+    </main>
+
+<script>
+        
+        async function loadPokemon(nombre) {
+            const url = `https://pokeapi.co/api/v2/pokemon/${nombre}`;
+
+            try {
+                
+                const respuesta = await fetch(url);
+                
+                
+                if (!respuesta.ok) throw new Error("No se encontró el Pokémon");
+
+                const datos = await respuesta.json();
+
+                
+                document.getElementById('pokemon-name').textContent = datos.name.toUpperCase();
+                document.getElementById('pokemon-sprite').src = datos.sprites.front_default;
+                document.getElementById('pokemon-sprite').alt = `Imagen de ${datos.name}`;
+
+                
+                const listaTipos = document.getElementById('pokemon-types');
+                listaTipos.innerHTML = ""; 
+                datos.types.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.type.name;
+                    listaTipos.appendChild(li);
+                });
+
+                
+                const listaHabilidades = document.getElementById('pokemon-abilities');
+                listaHabilidades.innerHTML = ""; 
+                datos.abilities.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.ability.name;
+                    listaHabilidades.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+                alert("Hubo un error al conectar con la PokéAPI");
+            }
+        }
+
+        
+        window.onload = () => loadPokemon('bulbasaur');
+    </script>
+</body>
+</html>
